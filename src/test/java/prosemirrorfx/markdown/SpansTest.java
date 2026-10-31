@@ -96,4 +96,54 @@ class SpansTest {
         "_x_ and `y`".codePoints().forEach(c -> m.type(new String(Character.toChars(c))));
         assertEquals("```\ncode_x_ and `y`\n```\n", Lossless.write(m.state().getDoc()));
     }
+
+    // ---- typing a fenced block
+
+    static void type(prosemirrorfx.core.editor.EditorModel m, String keys) {
+        var first = true;
+        for (var line : keys.split("\n", -1)) {
+            if (!first) m.run(prosemirrorfx.core.commands.Commands.enter);
+            first = false;
+            line.codePoints().forEach(c -> m.type(new String(Character.toChars(c))));
+        }
+    }
+
+    @Test
+    void typingAFenceAndEnterMakesACodeBlockWithTheCaretInside() {
+        var m = typed("a\n", "");
+        type(m, "\n```java\nint x = 1;\n  y_z();");
+        assertEquals("a\n\n```java\nint x = 1;\n  y_z();\n```\n", Lossless.write(m.state().getDoc()));
+        // the file reads back as one code block, the same as the one typed
+        assertEquals(Lossless.write(m.state().getDoc()), Lossless.write(Lossless.read(Lossless.write(m.state().getDoc()))));
+    }
+
+    @Test
+    void enterInsideACodeBlockAddsALineAndOnlyTheClosingFenceLeavesIt() {
+        var md = "```\ncode\n```\n";
+        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
+        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 1 + 3 + 1 + 4));
+        type(m, "\nmore");
+        assertEquals("```\ncode\nmore\n```\n", Lossless.write(m.state().getDoc()));
+        assertEquals(1, m.state().getDoc().getChildCount());
+        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), m.state().getDoc().getFirstChild().getNodeSize() - 1));
+        type(m, "\nafter _it_");
+        assertEquals("```\ncode\nmore\n```\n\nafter _it_\n", Lossless.write(m.state().getDoc()));
+        assertEquals(2, m.state().getDoc().getChildCount());
+    }
+
+    @Test
+    void aBlockAtTheEndOfTheDocumentLeavesAParagraphToArrowInto() {
+        var m = typed("a\n", "");
+        type(m, "\n~~~\nz");
+        assertEquals(3, m.state().getDoc().getChildCount());
+        assertEquals("a\n\n~~~\nz\n~~~\n",Lossless.write(m.state().getDoc()));
+    }
+
+    @Test
+    void inAListItemAFenceStaysText() {
+        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
+        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
+        type(m, "\n```\nq");
+        assertEquals("- item\n- \\```\n- q\n", Lossless.write(m.state().getDoc()));
+    }
 }
