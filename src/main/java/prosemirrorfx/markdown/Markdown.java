@@ -100,6 +100,8 @@ public final class Markdown {
 
     static List<String> delimiters(List<Mark> marks) {
         var d = new ArrayList<String>();
+        if (marks.stream().anyMatch(m -> m.getType() == HIGHLIGHT)) d.add("^^");
+        if (marks.stream().anyMatch(m -> m.getType() == STRIKE)) d.add("~~");
         if (marks.stream().anyMatch(m -> m.getType() == STRONG)) d.add("**");
         if (marks.stream().anyMatch(m -> m.getType() == EM)) d.add("_");
         return d;
@@ -171,21 +173,21 @@ public final class Markdown {
 
     static com.atlassian.prosemirror.model.Fragment inlineOf(org.commonmark.node.Node parent) {
         var out = new ArrayList<Node>();
-        inlines(parent, List.of(), out);
+        inlines(parent, List.of(), out, new Spans(parent));
         return frag(out.toArray(Node[]::new));
     }
 
-    static void inlines(org.commonmark.node.Node parent, List<Mark> marks, List<Node> out) {
+    static void inlines(org.commonmark.node.Node parent, List<Mark> marks, List<Node> out, Spans spans) {
         for (var c = parent.getFirstChild(); c != null; c = c.getNext()) {
             switch (c) {
-                case Text t -> add(out, t.getLiteral(), marks);
+                case Text t -> spans.add(out, t.getLiteral(), marks);
                 case Code code -> add(out, code.getLiteral(), marks);
                 case SoftLineBreak s -> add(out, " ", marks);
                 case HardLineBreak h -> out.add(HARD_BREAK.create(null, EMPTY, null));
-                case StrongEmphasis s -> inlines(s, with(marks, STRONG.create(null)), out);
-                case Emphasis e -> inlines(e, with(marks, EM.create(null)), out);
+                case StrongEmphasis s -> inlines(s, with(marks, STRONG.create(null)), out, spans);
+                case Emphasis e -> inlines(e, with(marks, EM.create(null)), out, spans);
                 case HtmlInline h -> add(out, h.getLiteral(), marks);
-                default -> inlines(c, marks, out);
+                default -> inlines(c, marks, out, spans);
             }
         }
     }

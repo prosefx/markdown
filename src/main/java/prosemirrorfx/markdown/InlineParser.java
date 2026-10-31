@@ -48,7 +48,7 @@ public final class InlineParser {
     static void line(String line, List<Node> out) {
         var doc = INLINE.parse(line);
         var before = out.size();
-        if (doc.getFirstChild() != null) inlines(doc.getFirstChild(), List.of(), out);
+        if (doc.getFirstChild() != null) inlines(doc.getFirstChild(), List.of(), out, new Spans(doc.getFirstChild()));
         if (out.size() == before) Markdown.add(out, line, List.of(RAW.create(null)));
     }
 
@@ -59,18 +59,18 @@ public final class InlineParser {
         return parse(s.replaceFirst("\\s+#+$", ""));
     }
 
-    static void inlines(org.commonmark.node.Node parent, List<Mark> marks, List<Node> out) {
+    static void inlines(org.commonmark.node.Node parent, List<Mark> marks, List<Node> out, Spans spans) {
         for (var c = parent.getFirstChild(); c != null; c = c.getNext()) {
             switch (c) {
-                case Text t -> Markdown.add(out, t.getLiteral(), marks);
+                case Text t -> spans.add(out, t.getLiteral(), marks);
                 case Code code -> Markdown.add(out, code.getLiteral(), Markdown.with(marks, CODE.create(null)));
                 case SoftLineBreak s -> Markdown.add(out, " ", marks);
-                case StrongEmphasis s -> inlines(s, Markdown.with(marks, STRONG.create(null)), out);
-                case Emphasis e -> inlines(e, Markdown.with(marks, EM.create(null)), out);
-                case Link l -> inlines(l, Markdown.with(marks, LINK.create(link(l))), out);
+                case StrongEmphasis s -> inlines(s, Markdown.with(marks, STRONG.create(null)), out, spans);
+                case Emphasis e -> inlines(e, Markdown.with(marks, EM.create(null)), out, spans);
+                case Link l -> inlines(l, Markdown.with(marks, LINK.create(link(l))), out, spans);
                 case HtmlInline h -> Markdown.add(out, h.getLiteral(), List.of(RAW.create(null)));
                 case Image i -> Markdown.add(out, image(i), List.of(RAW.create(null)));
-                default -> inlines(c, marks, out);
+                default -> inlines(c, marks, out, spans);
             }
         }
     }

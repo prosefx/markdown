@@ -181,7 +181,8 @@ class LosslessTest {
         var m = new EditorModel(Lossless.read(fixture("thread.md")));
         var text = m.state().getDoc().textBetween(0, m.state().getDoc().getContent().getSize(), "\n", "\n");
         assertTrue(text.contains(">> Is the second section still needed?"));
-        assertTrue(text.contains("\t>>") || text.contains(">> ^^AI^^ (2026-01-15 09:30 UTC): Yes, it carries the only reference to the original source."));
+        // ^^AI^^ is a highlight now, so the editor sees the words without the carets
+        assertTrue(text.contains(">> AI (2026-01-15 09:30 UTC): Yes, it carries the only reference to the original source."));
         assertTrue(text.contains("• plain") || fixture("scripts.md").contains("• plain"));
     }
 }

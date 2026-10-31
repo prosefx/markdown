@@ -73,6 +73,8 @@ public final class InlineWriter {
     static List<Delim> delimiters(List<Mark> marks, boolean star) {
         var d = new ArrayList<Delim>();
         marks.stream().filter(m -> m.getType() == LINK).findFirst().ifPresent(m -> d.add(new Delim("[", "](" + destination(m) + ")")));
+        if (marks.stream().anyMatch(m -> m.getType() == HIGHLIGHT)) d.add(new Delim("^^", "^^"));
+        if (marks.stream().anyMatch(m -> m.getType() == STRIKE)) d.add(new Delim("~~", "~~"));
         if (marks.stream().anyMatch(m -> m.getType() == STRONG)) d.add(new Delim("**", "**"));
         if (marks.stream().anyMatch(m -> m.getType() == EM)) d.add(star ? new Delim("*", "*") : new Delim("_", "_"));
         return d;
