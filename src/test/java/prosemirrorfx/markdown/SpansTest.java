@@ -150,6 +150,14 @@ class SpansTest {
     }
 
     @Test
+    void aTableTypedRowByRowStaysOneTableAndAnEmptyLineLeavesIt() {
+        var m = typed("a\n", "");
+        type(m, "\n| hello | world |\n|---|---|\n| some | thing |\n\nafter");
+        assertEquals("a\n\n| hello | world |\n|---|---|\n| some | thing |\n\nafter\n", Lossless.write(m.state().getDoc()));
+        assertEquals(3, m.state().getDoc().getChildCount());
+    }
+
+    @Test
     void inAListItemAFenceStaysText() {
         var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
         m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
