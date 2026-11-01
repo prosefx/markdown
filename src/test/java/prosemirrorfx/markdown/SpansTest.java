@@ -158,10 +158,35 @@ class SpansTest {
     }
 
     @Test
-    void inAListItemAFenceStaysText() {
+    void inAListItemAFenceMakesACodeBlockWhoseLinesKeepTheItemsIndent() {
         var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
         m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
-        type(m, "\n```\nq");
-        assertEquals("- item\n- \\```\n- q\n", Lossless.write(m.state().getDoc()));
+        type(m, "\n```java\nint x;\n  y();");
+        var md = Lossless.write(m.state().getDoc());
+        assertEquals("- item\n- ```java\n  int x;\n    y();\n  ```\n", md);
+        // read back, it is still one list of two items, the second holding the code block
+        var back = Lossless.read(md);
+        assertEquals(1, back.getChildCount());
+        assertEquals(2, back.getFirstChild().getChildCount());
+        assertEquals(md, Lossless.write(back));
+    }
+
+    @Test
+    void aCodeBlockAlreadyInAListItemComesBackByteForByteAndATypedLineGetsTheIndent() {
+        var md = "- item\n\n  ```\n  code\n  ```\n- next\n";
+        assertEquals(md, Lossless.write(Lossless.read(md)));
+        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
+        // list 0, item 1, "item" 3..7, the code block opens at 8: its text starts at 9, "  ```" and a break, then "  code"
+        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 9 + "  ```".length() + 1 + "  code".length()));
+        type(m, "\nmore");
+        assertEquals("- item\n\n  ```\n  code\n  more\n  ```\n- next\n", Lossless.write(m.state().getDoc()));
+    }
+
+    @Test
+    void inlineCodeIsTypedInAListItemToo() {
+        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
+        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
+        type(m, " `a_b` c");
+        assertEquals("- item `a_b` c\n", Lossless.write(m.state().getDoc()));
     }
 }

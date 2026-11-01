@@ -56,7 +56,7 @@ final class LosslessWriter {
         var verbatim = Boolean.TRUE.equals(attr(n, "verbatim"));
         if (type == PARAGRAPH && !verbatim && n.getContent().getSize() == 0 && marker == null) return;
         if (marker == null) out.addAll(gap(n, prev == null ? "" : "\n"));
-        var lines = type == HEADING ? heading(n, c) : verbatim ? raw(n) : text(n, c, marker != null);
+        var lines = type == HEADING ? heading(n, c) : verbatim ? raw(n, c, marker != null) : text(n, c, marker != null);
         var prefix = marker != null ? marker : verbatim ? "" : lead(n, c);
         placed.put(n, new Placed(out.size(), prefix, lines));
         out.add(prefix + lines.getFirst());
@@ -93,10 +93,23 @@ final class LosslessWriter {
         return List.of(hashes + " " + String.join(" ", InlineWriter.lines(n.getContent(), true)).strip());
     }
 
-    List<String> raw(Node n) {
+    /**
+     * A verbatim block's lines as they are. Inside a list item each line must carry the item's indent to stay in the
+     * item: a block read from a file has it in its text already (so the file comes back byte for byte), a line typed in
+     * the editor does not, so a non-empty line without it gets it (the first line after the item's marker excepted).
+     */
+    List<String> raw(Node n, Ctx c, boolean afterMarker) {
         var sb = new StringBuilder();
-        for (var c : n.getContent().getContent()) sb.append(c.isText() ? c.getText() : "\n");
-        return List.of(sb.toString().split("\n", -1));
+        for (var k : n.getContent().getContent()) sb.append(k.isText() ? k.getText() : "\n");
+        var lines = new ArrayList<>(List.of(sb.toString().split("\n", -1)));
+        if (c.pad.isEmpty()) return lines;
+        // read from a file, the block's last line (its closing fence) carries the indent; typed in the editor, no line does
+        var last = "";
+        for (var l : lines) if (!l.isBlank()) last = l;
+        var fromFile = last.startsWith(c.pad);
+        for (var i = afterMarker ? 1 : 0; i < lines.size(); i++)
+            if (!lines.get(i).isEmpty() && (!fromFile || !lines.get(i).startsWith(c.pad))) lines.set(i, c.pad + lines.get(i));
+        return lines;
     }
 
     void list(Node list, Node prev, Ctx c, List<String> out) {
