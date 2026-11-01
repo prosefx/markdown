@@ -83,6 +83,16 @@ class SpansTest {
     }
 
     @Test
+    void typingHighlightAndStrikeMarksThemAndTheFileKeepsTheMarkup() {
+        var m = typed("a\n", " ^^AI^^ : yes ~~no~~");
+        assertEquals("{:a }{highlight:AI}{: : yes }{strike:no}\n", Sig.inline(m.state().getDoc().getFirstChild().getContent(), false));
+        assertEquals("a ^^AI^^ : yes ~~no~~\n", Lossless.write(m.state().getDoc()));
+        var c = typed(">> x\n", "");
+        " ^^AI^^: ok".codePoints().forEach(ch -> c.type(new String(Character.toChars(ch))));
+        assertEquals(">> x ^^AI^^: ok\n", Lossless.write(c.state().getDoc()));
+    }
+
+    @Test
     void aLoneOrTripleBacktickIsJustText() {
         assertEquals("a ` b\n", Lossless.write(typed("a\n", " ` b").state().getDoc()));
         assertEquals("a ``` b\n", Lossless.write(typed("a\n", " ``` b").state().getDoc()));
