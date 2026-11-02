@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Mark;
 import com.atlassian.prosemirror.model.Node;
@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * The document as Markdown: headings (#..######), paragraphs, nested bullet and numbered

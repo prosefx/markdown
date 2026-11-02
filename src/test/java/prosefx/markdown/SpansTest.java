@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -68,9 +68,9 @@ class SpansTest {
 
     // ---- typing code
 
-    static prosemirrorfx.core.editor.EditorModel typed(String md, String keys) {
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), m.state().getDoc().getContent().getSize() - 1));
+    static prosefx.core.editor.EditorModel typed(String md, String keys) {
+        var m = new prosefx.core.editor.EditorModel(Lossless.read(md));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), m.state().getDoc().getContent().getSize() - 1));
         keys.codePoints().forEach(c -> m.type(new String(Character.toChars(c))));
         return m;
     }
@@ -101,18 +101,18 @@ class SpansTest {
     @Test
     void nothingTypedInAFencedBlockBecomesFormatting() {
         var md = "```\ncode\n```\n";
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 1 + "```".length() + 1 + "code".length()));
+        var m = new prosefx.core.editor.EditorModel(Lossless.read(md));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), 1 + "```".length() + 1 + "code".length()));
         "_x_ and `y`".codePoints().forEach(c -> m.type(new String(Character.toChars(c))));
         assertEquals("```\ncode_x_ and `y`\n```\n", Lossless.write(m.state().getDoc()));
     }
 
     // ---- typing a fenced block
 
-    static void type(prosemirrorfx.core.editor.EditorModel m, String keys) {
+    static void type(prosefx.core.editor.EditorModel m, String keys) {
         var first = true;
         for (var line : keys.split("\n", -1)) {
-            if (!first) m.run(prosemirrorfx.core.commands.Commands.enter);
+            if (!first) m.run(prosefx.core.commands.Commands.enter);
             first = false;
             line.codePoints().forEach(c -> m.type(new String(Character.toChars(c))));
         }
@@ -130,12 +130,12 @@ class SpansTest {
     @Test
     void enterInsideACodeBlockAddsALineAndOnlyTheClosingFenceLeavesIt() {
         var md = "```\ncode\n```\n";
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 1 + 3 + 1 + 4));
+        var m = new prosefx.core.editor.EditorModel(Lossless.read(md));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), 1 + 3 + 1 + 4));
         type(m, "\nmore");
         assertEquals("```\ncode\nmore\n```\n", Lossless.write(m.state().getDoc()));
         assertEquals(1, m.state().getDoc().getChildCount());
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), m.state().getDoc().getFirstChild().getNodeSize() - 1));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), m.state().getDoc().getFirstChild().getNodeSize() - 1));
         type(m, "\nafter _it_");
         assertEquals("```\ncode\nmore\n```\n\nafter _it_\n", Lossless.write(m.state().getDoc()));
         assertEquals(2, m.state().getDoc().getChildCount());
@@ -159,8 +159,8 @@ class SpansTest {
 
     @Test
     void inAListItemAFenceMakesACodeBlockWhoseLinesKeepTheItemsIndent() {
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
+        var m = new prosefx.core.editor.EditorModel(Lossless.read("- item\n"));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
         type(m, "\n```java\nint x;\n  y();");
         var md = Lossless.write(m.state().getDoc());
         assertEquals("- item\n- ```java\n  int x;\n    y();\n  ```\n", md);
@@ -175,17 +175,17 @@ class SpansTest {
     void aCodeBlockAlreadyInAListItemComesBackByteForByteAndATypedLineGetsTheIndent() {
         var md = "- item\n\n  ```\n  code\n  ```\n- next\n";
         assertEquals(md, Lossless.write(Lossless.read(md)));
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
+        var m = new prosefx.core.editor.EditorModel(Lossless.read(md));
         // list 0, item 1, "item" 3..7, the code block opens at 8: its text starts at 9, "  ```" and a break, then "  code"
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 9 + "  ```".length() + 1 + "  code".length()));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), 9 + "  ```".length() + 1 + "  code".length()));
         type(m, "\nmore");
         assertEquals("- item\n\n  ```\n  code\n  more\n  ```\n- next\n", Lossless.write(m.state().getDoc()));
     }
 
     @Test
     void inlineCodeIsTypedInAListItemToo() {
-        var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read("- item\n"));
-        m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
+        var m = new prosefx.core.editor.EditorModel(Lossless.read("- item\n"));
+        m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), 3 + "item".length()));
         type(m, " `a_b` c");
         assertEquals("- item `a_b` c\n", Lossless.write(m.state().getDoc()));
     }

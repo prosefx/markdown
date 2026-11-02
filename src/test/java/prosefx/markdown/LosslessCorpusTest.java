@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -42,14 +42,14 @@ class LosslessCorpusTest {
         var wide = new ArrayList<String>();
         for (var f : files) {
             var md = new String(Files.readAllBytes(f), java.nio.charset.StandardCharsets.UTF_8);
-            var m = new prosemirrorfx.core.editor.EditorModel(Lossless.read(md));
+            var m = new prosefx.core.editor.EditorModel(Lossless.read(md));
             var spots = new ArrayList<Integer>();
             m.state().getDoc().descendants((node, pos, parent, index) -> {
-                if (node.isText() && node.getText().length() > 4 && node.getMarks().isEmpty() && parent.getType() == prosemirrorfx.core.schema.EditorSchema.PARAGRAPH && !Boolean.TRUE.equals(prosemirrorfx.core.pm.Pm.attr(parent, "verbatim"))) spots.add(pos + 2);
+                if (node.isText() && node.getText().length() > 4 && node.getMarks().isEmpty() && parent.getType() == prosefx.core.schema.EditorSchema.PARAGRAPH && !Boolean.TRUE.equals(prosefx.core.pm.Pm.attr(parent, "verbatim"))) spots.add(pos + 2);
                 return true;
             });
             if (spots.isEmpty()) continue;
-            m.select(prosemirrorfx.core.pm.Pm.cursor(m.state().getDoc(), spots.get(spots.size() / 2)));
+            m.select(prosefx.core.pm.Pm.cursor(m.state().getDoc(), spots.get(spots.size() / 2)));
             m.type("Z");
             var out = Lossless.write(m.state().getDoc());
             var a = md.split("\n", -1);

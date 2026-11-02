@@ -1,11 +1,11 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 
-import static prosemirrorfx.markdown.LineParser.cols;
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.markdown.LineParser.cols;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * Writes one top-level block. A block that was read and not changed is written from the source and layout

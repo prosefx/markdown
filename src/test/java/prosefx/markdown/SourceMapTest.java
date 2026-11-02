@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.ArrayList;

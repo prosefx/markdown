@@ -1,11 +1,11 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Fragment;
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * An edited paragraph of several lines (pasted code, a table, a log) written back line by line: the lines the edit

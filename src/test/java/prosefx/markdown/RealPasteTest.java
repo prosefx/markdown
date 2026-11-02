@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.nio.charset.StandardCharsets;
@@ -6,7 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static prosemirrorfx.core.schema.Build.doc;
+import static prosefx.core.schema.Build.doc;
 
 /**
  * Clipboard HTML captured from the real applications (resources/paste/NAME.html, the fragment exactly as JavaFX

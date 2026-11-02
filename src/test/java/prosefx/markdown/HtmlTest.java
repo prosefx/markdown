@@ -1,13 +1,13 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static prosemirrorfx.core.pm.Pm.EMPTY;
-import static prosemirrorfx.core.schema.Build.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.EMPTY;
+import static prosefx.core.schema.Build.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /** Clipboard HTML as the common sources write it, cut down to the parts that matter. */
 class HtmlTest {

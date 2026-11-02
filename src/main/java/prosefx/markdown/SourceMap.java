@@ -1,9 +1,9 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 
-import static prosemirrorfx.core.schema.EditorSchema.HARD_BREAK;
+import static prosefx.core.schema.EditorSchema.HARD_BREAK;
 
 /**
  * Where each part of a document sits in the Markdown it is written as, and back: a document position to a line and

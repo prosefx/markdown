@@ -1,11 +1,11 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Mark;
 import com.atlassian.prosemirror.model.MarkType;
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * The two span marks commonmark does not know: ^^highlight^^ (a Logseq thing) and ~~strike~~. A delimiter turns a span

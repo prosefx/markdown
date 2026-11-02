@@ -1,10 +1,10 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * Markdown the way the user writes it, read into the document and written back unchanged: load a file, edit

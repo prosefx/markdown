@@ -1,11 +1,11 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * Markdown as the user writes it, read line by line: headings, nested bullet and numbered lists (tab or

@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Fragment;
 import com.atlassian.prosemirror.model.Mark;
@@ -7,8 +7,8 @@ import java.util.*;
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * One textblock's source (its lines joined with \n) as inline content: text, strong, em, code, links. A line

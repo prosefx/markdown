@@ -1,16 +1,16 @@
-# prosemirrorfx-markdown
+# prosefx-markdown
 
-Markdown and clipboard HTML to and from the prosemirrorfx document. Depends on `prosemirrorfx-core`; no JavaFX.
+Markdown and clipboard HTML to and from the prosefx document. Depends on `prosefx-core`; no JavaFX.
 
-Built on [prosemirror-kotlin](https://github.com/atlassian-labs/prosemirror-kotlin) by Atlassian (Apache License 2.0) through `prosemirrorfx-core`. prosemirrorfx is an independent project and is not affiliated with ProseMirror or Atlassian.
+Built on [prosemirror-kotlin](https://github.com/atlassian-labs/prosemirror-kotlin) by Atlassian (Apache License 2.0) through `prosefx-core`. prosefx is an independent project and is not affiliated with ProseMirror or Atlassian.
 
 ## Status
 
 Not yet published. Snapshots only to begin with: `0.1.0-SNAPSHOT` on `https://central.sonatype.com/repository/maven-snapshots/`. Java 25.
 
     <dependency>
-        <groupId>io.github.prosemirrorfx</groupId>
-        <artifactId>prosemirrorfx-markdown</artifactId>
+        <groupId>io.github.prosefx</groupId>
+        <artifactId>prosefx-markdown</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </dependency>
 

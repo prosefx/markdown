@@ -1,12 +1,12 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Fragment;
 import com.atlassian.prosemirror.model.Mark;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static prosemirrorfx.core.pm.Pm.*;
-import static prosemirrorfx.core.schema.EditorSchema.*;
+import static prosefx.core.pm.Pm.*;
+import static prosefx.core.schema.EditorSchema.*;
 
 /**
  * Inline content as Markdown source, for text that was typed or edited. Escapes only what is needed: it writes

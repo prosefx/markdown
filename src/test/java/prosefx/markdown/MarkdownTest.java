@@ -1,11 +1,11 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import com.atlassian.prosemirror.model.Node;
 import org.junit.jupiter.api.Test;
-import prosemirrorfx.core.schema.EditorSchema;
+import prosefx.core.schema.EditorSchema;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static prosemirrorfx.core.schema.Build.*;
+import static prosefx.core.schema.Build.*;
 
 class MarkdownTest {
 
@@ -89,6 +89,6 @@ class MarkdownTest {
     static Node stripEmpty(Node d) {
         var kids = new java.util.ArrayList<Node>();
         for (var c : d.getContent().getContent()) if (!(c.isTextblock() && c.getContent().getSize() == 0)) kids.add(c);
-        return prosemirrorfx.core.pm.Pm.copy(d, prosemirrorfx.core.pm.Pm.frag(kids.toArray(Node[]::new)));
+        return prosefx.core.pm.Pm.copy(d, prosefx.core.pm.Pm.frag(kids.toArray(Node[]::new)));
     }
 }

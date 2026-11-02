@@ -1,4 +1,4 @@
-package prosemirrorfx.markdown;
+package prosefx.markdown;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -6,11 +6,11 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import prosemirrorfx.core.editor.EditorModel;
-import prosemirrorfx.core.pm.Pm;
+import prosefx.core.editor.EditorModel;
+import prosefx.core.pm.Pm;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static prosemirrorfx.core.commands.Commands.*;
+import static prosefx.core.commands.Commands.*;
 
 class LosslessTest {
 
