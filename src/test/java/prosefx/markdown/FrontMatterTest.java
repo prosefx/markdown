@@ -97,6 +97,32 @@ class FrontMatterTest {
         assertTrue(Lossless.write(doc).contains("body"));
     }
 
+    static final String HEADER = "---\nnumber: 1\nstatus: in_progress\nname: example\ncreated_utc: \"2026-11-22T06:35:00Z\"\nlast_worked_on_utc: 2026-11-22T06:35:00Z\nsome_unknown_key: [x, y]\nanother-key: \"kept: as written\"\n---\n\n# Body\n";
+
+    @Test void anyKeysInAnyOrderAreKeptAsWritten() {
+        assertEquals(HEADER, LosslessTest.roundTrip(HEADER));
+        assertTrue(isFront(Lossless.read(HEADER).getFirstChild()));
+        var shuffled = "---\nlast_worked_on_utc: 2026-11-22T06:35:00Z\nzzz: 1\nstatus: blocked\n---\n";
+        assertEquals(shuffled, LosslessTest.roundTrip(shuffled));
+    }
+
+    @Test void aTimestampLineEditedInPlaceChangesOnlyThatLine() {
+        var m = LosslessTest.after(HEADER, "last_worked_on_utc: 2026-11-22T06:35:0");
+        m.run(backspace);
+        m.type("9");
+        var out = Lossless.write(m.state().getDoc());
+        assertEquals(List.of("5: last_worked_on_utc: 2026-11-22T06:35:00Z  ->  last_worked_on_utc: 2026-11-22T06:35:90Z"), LosslessTest.changedLines(HEADER, out));
+    }
+
+    @Test void aNewKeyAddedBeforeTheClosingLineStaysInsideTheBlock() {
+        var m = LosslessTest.after(HEADER, "another-key: \"kept: as written\"");
+        m.run(enter);
+        m.type("added_key: yes");
+        var out = Lossless.write(m.state().getDoc());
+        assertEquals(HEADER.replace("as written\"\n---", "as written\"\nadded_key: yes\n---"), out);
+        assertTrue(isFront(Lossless.read(out).getFirstChild()));
+    }
+
     @Test void aLineAddedWithEnterIsAKeyLineOfTheSameBlock() {
         var md = "---\nk: v\n---\n\ntext\n";
         var m = LosslessTest.after(md, "k: v");
