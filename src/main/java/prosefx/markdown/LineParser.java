@@ -34,8 +34,36 @@ final class LineParser {
     }
 
     static List<Node> parse(List<String> lines) {
+        return new LineParser(lines).blocks(0, lines.size(), 0, "", false);
+    }
+
+    /** The lines of a whole file (or of its first block): as parse, with YAML front matter at the very top read as one block. Not for a block from further down, which only looks like it starts a file when read alone. */
+    static List<Node> parseDocument(List<String> lines) {
         var p = new LineParser(lines);
-        return p.blocks(0, lines.size(), 0, "", false);
+        var front = frontMatterEnd(lines);
+        if (front == 0) return p.blocks(0, lines.size(), 0, "", false);
+        var out = new ArrayList<Node>();
+        out.add(p.verbatim(0, front, ""));
+        out.addAll(p.blocks(front, lines.size(), 0, "", false));
+        return out;
+    }
+
+    static final Pattern FRONT_OPEN = Pattern.compile("^---[ \\t]*$"), FRONT_CLOSE = Pattern.compile("^(---|\\.\\.\\.)[ \\t]*$"),
+            FRONT_KEY = Pattern.compile("^(#.*|[^\\s:#\\-][^:]*:([ \\t].*)?|-([ \\t].*)?)$");
+
+    /**
+     * YAML front matter: `---` on the very first line, a closing `---` (or `...`) later, and between them lines that look like YAML
+     * (the first a comment or `key:`), so a file that starts with a rule and has another rule further down is not taken for it.
+     * Returns the number of lines it takes (the closing line included), or 0. It is kept as one verbatim block, like a fence,
+     * so that it comes back byte for byte and what is typed in it is never turned into formatting.
+     */
+    static int frontMatterEnd(List<String> lines) {
+        if (lines.isEmpty() || !FRONT_OPEN.matcher(lines.getFirst()).matches()) return 0;
+        for (var k = 1; k < lines.size(); k++) {
+            if (FRONT_CLOSE.matcher(lines.get(k)).matches()) return k + 1;
+            if (k == 1 && !FRONT_KEY.matcher(lines.get(k)).matches()) return 0;
+        }
+        return 0;
     }
 
     static Line line(String raw) {

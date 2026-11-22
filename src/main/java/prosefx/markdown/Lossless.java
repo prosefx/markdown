@@ -25,7 +25,7 @@ public final class Lossless {
         while (last >= 0 && all.get(last).isBlank()) last--;
         var end = 0;
         for (var k = 0; k <= last; k++) end += all.get(k).length() + (k < last ? 1 : 0);
-        var blocks = LineParser.parse(all.subList(0, last + 1));
+        var blocks = LineParser.parseDocument(all.subList(0, last + 1));
         if (blocks.isEmpty()) blocks = List.of(create(PARAGRAPH, EMPTY));
         return create(DOC, attrs("tail", text.substring(end), "eol", crlf ? "\r\n" : "\n", "bom", bom), frag(blocks.toArray(Node[]::new)));
     }
@@ -53,14 +53,14 @@ public final class Lossless {
     static LosslessWriter block(Node n, Node prev) {
         var writer = new LosslessWriter(false);
         var lines = writer.top(n, prev);
-        if (lines.isEmpty() || readsBack(lines, n)) return writer;
+        if (lines.isEmpty() || readsBack(lines, n, prev == null)) return writer;
         var canonical = new LosslessWriter(true);
         canonical.top(n, prev);
         return canonical;
     }
 
-    static boolean readsBack(List<String> lines, Node n) {
-        var read = LineParser.parse(lines);
+    static boolean readsBack(List<String> lines, Node n, boolean first) {
+        var read = first ? LineParser.parseDocument(lines) : LineParser.parse(lines);
         return read.size() == 1 && Sig.of(read.getFirst(), true).equals(Sig.of(n, true));
     }
 

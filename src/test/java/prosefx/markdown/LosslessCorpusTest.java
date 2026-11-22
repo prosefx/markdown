@@ -28,7 +28,7 @@ class LosslessCorpusTest {
             if (!out.equals(md)) bad.add(f + "  " + firstDifference(md, out));
         }
         System.out.printf("lossless corpus: %d files, %d differ, %d ms%n", files.size(), bad.size(), (System.nanoTime() - start) / 1_000_000);
-        bad.stream().limit(25).forEach(System.out::println);
+        bad.stream().limit(Integer.getInteger("lossless.list", 25)).forEach(System.out::println);
         assertEquals(0, bad.size(), () -> bad.stream().limit(10).collect(Collectors.joining("\n")));
     }
 
