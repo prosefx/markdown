@@ -25,7 +25,7 @@ class LosslessTest {
     static String roundTrip(String md) { return Lossless.write(Lossless.read(md)); }
 
     @ParameterizedTest
-    @ValueSource(strings = {"thread.md", "outline.md", "mixed.md", "scripts.md"})
+    @ValueSource(strings = {"thread.md", "outline.md", "mixed.md", "scripts.md", "fenced.md"})
     void aFileComesBackByteForByte(String name) {
         var md = fixture(name);
         assertEquals(md, roundTrip(md));
