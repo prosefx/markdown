@@ -103,12 +103,16 @@ final class LosslessWriter {
         for (var k : n.getContent().getContent()) sb.append(k.isText() ? k.getText() : "\n");
         var lines = new ArrayList<>(List.of(sb.toString().split("\n", -1)));
         if (c.pad.isEmpty()) return lines;
-        // read from a file, the block's last line (its closing fence) carries the indent; typed in the editor, no line does
+        // read from a file, the block's last line (its closing fence) carries the indent, as many columns as the item's content
+        // starts at, in whatever whitespace the file used (a tab or spaces); typed in the editor, no line does and the item's own is used
         var last = "";
         for (var l : lines) if (!l.isBlank()) last = l;
-        var fromFile = last.startsWith(c.pad);
+        var own = LineParser.line(last).ws();
+        var need = cols(c.pad, 0);
+        var fromFile = cols(own, 0) >= need;
+        var fill = fromFile ? own : c.pad;
         for (var i = afterMarker ? 1 : 0; i < lines.size(); i++)
-            if (!lines.get(i).isEmpty() && (!fromFile || !lines.get(i).startsWith(c.pad))) lines.set(i, c.pad + lines.get(i));
+            if (!lines.get(i).isEmpty() && !(fromFile && (lines.get(i).isBlank() || cols(LineParser.line(lines.get(i)).ws(), 0) >= need))) lines.set(i, fill + lines.get(i));
         return lines;
     }
 
